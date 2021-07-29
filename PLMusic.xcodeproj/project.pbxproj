@@ -9,21 +9,23 @@
 /* Begin PBXBuildFile section */
 		9C8C8D4E26B1CB8100DF893E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8C8D4D26B1CB8100DF893E /* AppDelegate.swift */; };
 		9C8C8D5026B1CB8100DF893E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8C8D4F26B1CB8100DF893E /* SceneDelegate.swift */; };
-		9C8C8D5226B1CB8100DF893E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8C8D5126B1CB8100DF893E /* ViewController.swift */; };
 		9C8C8D5526B1CB8100DF893E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9C8C8D5326B1CB8100DF893E /* Main.storyboard */; };
 		9C8C8D5726B1CB8600DF893E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9C8C8D5626B1CB8600DF893E /* Assets.xcassets */; };
 		9C8C8D5A26B1CB8600DF893E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9C8C8D5826B1CB8600DF893E /* LaunchScreen.storyboard */; };
+		9C8C8D6226B25E2700DF893E /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8C8D6126B25E2700DF893E /* SearchViewController.swift */; };
+		9C8C8D6426B2F7A600DF893E /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8C8D6326B2F7A500DF893E /* PlayerViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		9C8C8D4A26B1CB8100DF893E /* PLMusic.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PLMusic.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C8C8D4D26B1CB8100DF893E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9C8C8D4F26B1CB8100DF893E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		9C8C8D5126B1CB8100DF893E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		9C8C8D5426B1CB8100DF893E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		9C8C8D5626B1CB8600DF893E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9C8C8D5926B1CB8600DF893E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9C8C8D5B26B1CB8600DF893E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9C8C8D6126B25E2700DF893E /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
+		9C8C8D6326B2F7A500DF893E /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,11 +60,12 @@
 			children = (
 				9C8C8D4D26B1CB8100DF893E /* AppDelegate.swift */,
 				9C8C8D4F26B1CB8100DF893E /* SceneDelegate.swift */,
-				9C8C8D5126B1CB8100DF893E /* ViewController.swift */,
 				9C8C8D5326B1CB8100DF893E /* Main.storyboard */,
 				9C8C8D5626B1CB8600DF893E /* Assets.xcassets */,
 				9C8C8D5826B1CB8600DF893E /* LaunchScreen.storyboard */,
 				9C8C8D5B26B1CB8600DF893E /* Info.plist */,
+				9C8C8D6126B25E2700DF893E /* SearchViewController.swift */,
+				9C8C8D6326B2F7A500DF893E /* PlayerViewController.swift */,
 			);
 			path = PLMusic;
 			sourceTree = "<group>";
@@ -137,7 +140,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9C8C8D5226B1CB8100DF893E /* ViewController.swift in Sources */,
+				9C8C8D6226B25E2700DF893E /* SearchViewController.swift in Sources */,
+				9C8C8D6426B2F7A600DF893E /* PlayerViewController.swift in Sources */,
 				9C8C8D4E26B1CB8100DF893E /* AppDelegate.swift in Sources */,
 				9C8C8D5026B1CB8100DF893E /* SceneDelegate.swift in Sources */,
 			);
