@@ -7,12 +7,13 @@
 
 import AVKit
 import Foundation
+import MediaPlayer
 
 public protocol PaulPlayerDelegate: AnyObject {
     
     func didReceiveNotification(player: AVPlayer?, notification: Notification.Name)
     func didUpdatePosition(_ player: AVPlayer?,_ position: PlayerPosition)
-    
+    func selectData(index:Int)
 }
 
 public struct PlayerPosition {
@@ -38,8 +39,11 @@ class PaulPlayerManager:NSObject {
     let player = AVPlayer()
     weak var delegate: PaulPlayerDelegate?
     
+    var current = 0
+    var maxCount = 0
     var playerObserver: Any?
     var timerInvalid: Bool = false
+    private var position = PlayerPosition()
     
     func setupPlayer(with url: URL) {
         let asset = AVURLAsset(url: url)
@@ -49,6 +53,7 @@ class PaulPlayerManager:NSObject {
             self.player.replaceCurrentItem(with: item)
             self.player.addObserver(self, forKeyPath: #keyPath(AVPlayer.timeControlStatus), options: [.new], context: nil)
             self.addTimeObserve()
+            self.setupRemoteTransportControls()
             self.player.allowsExternalPlayback = true
             self.player.usesExternalPlaybackWhileExternalScreenIsActive = true
             
@@ -77,9 +82,9 @@ class PaulPlayerManager:NSObject {
                 }
                 
                 let currentTime = currentItem.currentTime()
-                let position: PlayerPosition = PlayerPosition(duration: Int(duration), current: Int(CMTimeGetSeconds(currentTime)))
+                self.position = PlayerPosition(duration: Int(duration), current: Int(CMTimeGetSeconds(currentTime)))
                 
-                self.delegate?.didUpdatePosition(self.player, position)
+                self.delegate?.didUpdatePosition(self.player, self.position)
             }
 
         })
@@ -205,6 +210,78 @@ class PaulPlayerManager:NSObject {
             break
         }
         
+    }
+    
+    func setupRemoteTransportControls() {
+        // Get the shared MPRemoteCommandCenter
+        let commandCenter = MPRemoteCommandCenter.shared()
+
+        // Add handler for Play Command
+        commandCenter.playCommand.addTarget { [unowned self] event in
+            if self.player.rate == 0.0 {
+                self.player.play()
+                return .success
+            }
+            return .commandFailed
+        }
+
+        // Add handler for Pause Command
+        commandCenter.pauseCommand.addTarget { [unowned self] event in
+            if self.player.rate == 1.0 {
+                self.player.pause()
+                return .success
+            }
+            return .commandFailed
+        }
+        
+        commandCenter.changePlaybackPositionCommand.addTarget
+        { [unowned self] event in
+            
+            if let event = event as? MPChangePlaybackPositionCommandEvent{
+                let percent = Float(event.positionTime)/Float(self.position.duration)
+                print("change playback",percent)
+                seekTo(Double(percent))
+            }
+            
+            return .success
+        }
+        
+        commandCenter.previousTrackCommand.addTarget
+        {[unowned self] event in
+            
+            delegate?.selectData(index: (current+maxCount - 1) % maxCount)
+            
+            return.success
+            
+        }
+        
+        commandCenter.nextTrackCommand.addTarget
+        {[unowned self] event in
+            
+            delegate?.selectData(index: (current+maxCount + 1) % maxCount)
+            
+            return.success
+            
+        }
+    }
+    
+    func setupNowPlaying(title:String,image:UIImage?) {
+        // Define Now Playing Info
+        var nowPlayingInfo = [String : Any]()
+        nowPlayingInfo[MPMediaItemPropertyTitle] = title
+
+        if let image = image {
+            nowPlayingInfo[MPMediaItemPropertyArtwork] =
+                MPMediaItemArtwork(boundsSize: image.size) { size in
+                    return image
+            }
+        }
+        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = self.player.currentItem?.currentTime().seconds
+        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = self.player.currentItem?.asset.duration.seconds
+        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = player.rate
+
+        // Set the metadata
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
     
     deinit {

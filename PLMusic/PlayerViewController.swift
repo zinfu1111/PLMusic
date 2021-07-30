@@ -200,7 +200,7 @@ class PlayerViewController: UIViewController {
     }
     
     func selectData(index:Int) {
-        
+        selectItem = index
         let selectMusic = musicData[index]
         let preMusic = musicData[(index + musicData.count - 1) % musicData.count]
         let nextMusic = musicData[(index + musicData.count + 1) % musicData.count]
@@ -210,6 +210,8 @@ class PlayerViewController: UIViewController {
         artistLabel.text = selectMusic.artistName
         songLabel.text = selectMusic.trackName
         
+        manager.current = index
+        manager.maxCount = musicData.count
         manager.setupPlayer(with: selectMusic.previewUrl)
         manager.delegate = self
     }
@@ -263,6 +265,8 @@ extension PlayerViewController: PaulPlayerDelegate{
         percentSlider.value = Float(position.current)/Float(position.duration)
         minTimeLabel.text = String(format: "%02d:%02d", position.current/60, position.current%60)
         maxTimeLabel.text = String(format: "%02d:%02d", position.duration/60, position.duration%60)
+        let selectMusic = musicData[selectItem]
+        manager.setupNowPlaying(title: selectMusic.trackName, image: artistImageView[0].image)
         updateTrackSlider()
     }
     
