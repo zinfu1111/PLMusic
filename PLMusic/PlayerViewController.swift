@@ -5,7 +5,7 @@
 //  Created by 連振甫 on 2021/7/29.
 //
 
-import UIKit
+import AVKit
 
 class PlayerViewController: UIViewController {
 
@@ -18,16 +18,48 @@ class PlayerViewController: UIViewController {
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var sliderTrack: NSLayoutConstraint!
     @IBOutlet weak var sliderTrackView: UIView!
+    @IBOutlet weak var playlistButton: UIImageView!
+    @IBOutlet weak var playListView: UIView!
+    @IBOutlet weak var playListBlurView: UIVisualEffectView!
+    
+    var isOpenPlayList = false
+    var playListVC: PlayListViewController!
     var sliderTrackLayer = CAGradientLayer()
+    var musicData:[Music] = []
+    var selectMusic:Music?
+    let player = AVPlayer()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         setupBackground()
-        percentSlider.setThumbImage(UIImage(named: "percentThumb"), for: .normal)
-        sliderTrackView.backgroundColor = .clear
-        sliderTrackView.layer.addSublayer(sliderTrackLayer)
+        setupSlider()
+        DataManager.shared.fetchMusic(completeHandler: { data in
+            self.musicData = data
+            DispatchQueue.main.async {
+                self.playListVC.musicData = self.musicData
+                self.playListVC.tableView.reloadData()
+                self.setupMusicImagePage()
+            }
+        })
     }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "playlist",
+           let playListVC = segue.destination as? PlayListViewController {
+            self.playListVC = playListVC
+        }
+    }
+    
+    
+    //MARK: - IBAction
     
     @IBAction func repeatAction(_ sender: UIButton) {
     }
@@ -48,6 +80,23 @@ class PlayerViewController: UIViewController {
     @IBAction func randomAction(_ sender: UIButton) {
     }
     
+    @IBAction func showPlayList(_ sender: UITapGestureRecognizer) {
+        
+        UIView.animate(withDuration: 1, animations: {[unowned self] in
+            
+            playlistButton.image = isOpenPlayList ?  UIImage(named: "slide-up") : UIImage(named: "slide-down")
+            
+            playListView.transform = isOpenPlayList ? CGAffineTransform.identity : CGAffineTransform.identity.translatedBy(x: 0, y: -(playListView.frame.height - 110))
+            
+        }, completion:{[unowned self] finished in
+            isOpenPlayList = !isOpenPlayList
+        })
+        
+    }
+    
+    
+    
+    // MARK: - Method
     func setupBackground() {
         
         if let pink = UIColor(named: "F3B0E0"),
@@ -60,6 +109,13 @@ class PlayerViewController: UIViewController {
         
         view.subviews.forEach({ view.bringSubviewToFront($0)})
     }
+    
+    func setupSlider() {
+        percentSlider.setThumbImage(UIImage(named: "percentThumb"), for: .normal)
+        sliderTrackView.backgroundColor = .clear
+        sliderTrackView.layer.addSublayer(sliderTrackLayer)
+    }
+    
     
     func updateTrackSlider() {
         let percentWidth = CGFloat(self.percentSlider.value) * percentSlider.frame.width
@@ -74,5 +130,18 @@ class PlayerViewController: UIViewController {
             sliderTrackLayer.endPoint = CGPoint(x: 1, y: 0.5)
         }
 
+    }
+    
+    func setupMusicImagePage() {
+        
+        artistImageView.forEach({ $0.layer.cornerRadius = $0.frame.width * 0.2})
+        
+        guard let selectMusic = selectMusic
+        else {
+            
+            artistImageView[1].setImage(by: musicData[1].artworkUrl100)
+            return
+            
+        }
     }
 }
