@@ -17,6 +17,7 @@
 		9C8C8D6B26B41ECB00DF893E /* MusicModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8C8D6A26B41ECB00DF893E /* MusicModel.swift */; };
 		9C8C8D6D26B4312C00DF893E /* MusicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8C8D6C26B4312B00DF893E /* MusicCell.swift */; };
 		9C8C8D6F26B433B200DF893E /* PlayListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8C8D6E26B433B200DF893E /* PlayListViewController.swift */; };
+		9C8C8D7126B4611F00DF893E /* PlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8C8D7026B4611E00DF893E /* PlayerManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		9C8C8D6A26B41ECB00DF893E /* MusicModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicModel.swift; sourceTree = "<group>"; };
 		9C8C8D6C26B4312B00DF893E /* MusicCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicCell.swift; sourceTree = "<group>"; };
 		9C8C8D6E26B433B200DF893E /* PlayListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayListViewController.swift; sourceTree = "<group>"; };
+		9C8C8D7026B4611E00DF893E /* PlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +77,7 @@
 				9C8C8D6A26B41ECB00DF893E /* MusicModel.swift */,
 				9C8C8D6C26B4312B00DF893E /* MusicCell.swift */,
 				9C8C8D6E26B433B200DF893E /* PlayListViewController.swift */,
+				9C8C8D7026B4611E00DF893E /* PlayerManager.swift */,
 			);
 			path = PLMusic;
 			sourceTree = "<group>";
@@ -155,6 +158,7 @@
 				9C8C8D4E26B1CB8100DF893E /* AppDelegate.swift in Sources */,
 				9C8C8D5026B1CB8100DF893E /* SceneDelegate.swift in Sources */,
 				9C8C8D6B26B41ECB00DF893E /* MusicModel.swift in Sources */,
+				9C8C8D7126B4611F00DF893E /* PlayerManager.swift in Sources */,
 				9C8C8D6D26B4312C00DF893E /* MusicCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -10,7 +10,7 @@ import UIKit
 class PlayListViewController: UITableViewController {
 
     var musicData = [Music]()
-    
+    var playerViewController: PlayerViewController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,6 +41,11 @@ class PlayListViewController: UITableViewController {
         
 
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        playerViewController.selectItem = indexPath.row
+        playerViewController.selectData(index: indexPath.row)
     }
     
     /*

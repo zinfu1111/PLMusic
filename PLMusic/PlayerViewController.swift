@@ -9,6 +9,7 @@ import AVKit
 
 class PlayerViewController: UIViewController {
 
+    //MARK: - IBOutlet
     @IBOutlet var artistImageView: [UIImageView]!
     @IBOutlet weak var songLabel: UILabel!
     @IBOutlet weak var artistLabel: UILabel!
@@ -21,27 +22,50 @@ class PlayerViewController: UIViewController {
     @IBOutlet weak var playlistButton: UIImageView!
     @IBOutlet weak var playListView: UIView!
     @IBOutlet weak var playListBlurView: UIVisualEffectView!
+    @IBOutlet weak var repeatButton: UIButton!
+    @IBOutlet weak var repeatImage: UIImageView!
+    @IBOutlet weak var randomButton: UIButton!
+    @IBOutlet weak var randomImage: UIImageView!
     
+    //MARK: - Property
     var isOpenPlayList = false
     var playListVC: PlayListViewController!
     var sliderTrackLayer = CAGradientLayer()
     var musicData:[Music] = []
-    var selectMusic:Music?
-    let player = AVPlayer()
+    var selectItem = 0
+    let manager = PaulPlayerManager.shared
+    var status: PlayState = .pause
+    var rule: PlayRule = .loop
     
-    
+    //MARK: - ViewController Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         setupBackground()
         setupSlider()
-        DataManager.shared.fetchMusic(completeHandler: { data in
+        repeatButton.backgroundColor = UIColor(named: "SelectRule")
+        randomButton.backgroundColor = .clear
+        artistImageView.forEach({ $0.layer.cornerRadius = $0.frame.width * 0.2})
+        DataManager.shared.fetchMusic(completeHandler: {[weak self] data in
+            
+            guard let self = self else { return }
+            
+            guard data.count > 0 else {
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "錯誤", message: "音樂清單無資料", preferredStyle: .alert)
+                    let check = UIAlertAction(title: "確定", style: .default, handler: nil)
+                    alert.addAction(check)
+                    self.present(alert, animated: true, completion: nil)
+                }
+                return
+            }
+            
             self.musicData = data
             DispatchQueue.main.async {
                 self.playListVC.musicData = self.musicData
                 self.playListVC.tableView.reloadData()
-                self.setupMusicImagePage()
+                self.selectData(index: 0)
             }
         })
     }
@@ -55,6 +79,7 @@ class PlayerViewController: UIViewController {
         if segue.identifier == "playlist",
            let playListVC = segue.destination as? PlayListViewController {
             self.playListVC = playListVC
+            self.playListVC.playerViewController = self
         }
     }
     
@@ -62,22 +87,64 @@ class PlayerViewController: UIViewController {
     //MARK: - IBAction
     
     @IBAction func repeatAction(_ sender: UIButton) {
+        if rule == .loop {
+            rule = .single
+            repeatImage.image = UIImage(named: "repeat1")
+        }else{
+            rule = .loop
+            repeatImage.image = UIImage(named: "repeat")
+        }
+        repeatButton.backgroundColor = UIColor(named: "SelectRule")
+        randomButton.backgroundColor = .clear
     }
     
+    @IBAction func setVolume(_ sender: UISlider) {
+        manager.player.volume = sender.value
+    }
     @IBAction func seekSliderAction(_ sender: UISlider) {
+        manager.seekTo(Double(sender.value))
         updateTrackSlider()
     }
     
     @IBAction func previos(_ sender: Any) {
+        manager.closePlayer()
+        selectItem = (selectItem + musicData.count - 1) % musicData.count
+        selectData(index: selectItem)
+    }
+    @IBAction func rightSwipe(_ sender: Any) {
+        manager.closePlayer()
+        selectItem = (selectItem + musicData.count - 1) % musicData.count
+        selectData(index: selectItem)
     }
     
     @IBAction func playAction(_ sender: Any) {
+        switch status {
+        case .pause:
+            manager.player.play()
+            playButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+            status = .play
+        case .play:
+            manager.player.pause()
+            playButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+            status = .pause
+        }
     }
     
     @IBAction func next(_ sender: Any) {
+        manager.closePlayer()
+        selectItem = (selectItem + musicData.count + 1) % musicData.count
+        selectData(index: selectItem)
     }
     
+    @IBAction func leftSwipe(_ sender: Any) {
+        manager.closePlayer()
+        selectItem = (selectItem + musicData.count + 1) % musicData.count
+        selectData(index: selectItem)
+    }
     @IBAction func randomAction(_ sender: UIButton) {
+        rule = .random
+        randomButton.backgroundColor = UIColor(named: "SelectRule")
+        repeatButton.backgroundColor = .clear
     }
     
     @IBAction func showPlayList(_ sender: UITapGestureRecognizer) {
@@ -132,16 +199,72 @@ class PlayerViewController: UIViewController {
 
     }
     
-    func setupMusicImagePage() {
+    func selectData(index:Int) {
         
-        artistImageView.forEach({ $0.layer.cornerRadius = $0.frame.width * 0.2})
+        let selectMusic = musicData[index]
+        let preMusic = musicData[(index + musicData.count - 1) % musicData.count]
+        let nextMusic = musicData[(index + musicData.count + 1) % musicData.count]
+        artistImageView[0].setImage(by: preMusic.artworkUrl100)
+        artistImageView[1].setImage(by: selectMusic.artworkUrl100)
+        artistImageView[2].setImage(by: nextMusic.artworkUrl100)
+        artistLabel.text = selectMusic.artistName
+        songLabel.text = selectMusic.trackName
         
-        guard let selectMusic = selectMusic
-        else {
-            
-            artistImageView[1].setImage(by: musicData[1].artworkUrl100)
-            return
-            
+        manager.setupPlayer(with: selectMusic.previewUrl)
+        manager.delegate = self
+    }
+}
+
+//MARK: - PaulPlayerDelegate
+extension PlayerViewController: PaulPlayerDelegate{
+    func didReceiveNotification(player: AVPlayer?, notification: Notification.Name) {
+        switch notification {
+        case .PlayerUnknownNotification:
+            manager.closePlayer()
+            break
+        case .PlayerReadyToPlayNotification:
+            break
+        case .PlayerDidToPlayNotification:
+            playButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+            status = .play
+            break
+        case .PlayerFailedNotification:
+            let alert = UIAlertController(title: "錯誤", message: "無法播放", preferredStyle: .alert)
+            let action = UIAlertAction(title: "確認", style: .default, handler: nil)
+            alert.addAction(action)
+            self.present(alert, animated: true, completion: nil)
+            break
+        case .PauseNotification:
+            playButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+            status = .pause
+            break
+        case .PlayerPlayFinishNotification:
+            manager.closePlayer()
+            switch rule {
+            case .loop:
+                selectItem = (selectItem + musicData.count + 1) % musicData.count
+                selectData(index: selectItem)
+            case .random:
+                selectItem = Int.random(in: 0..<musicData.count)
+                selectData(index: selectItem)
+            case .single:
+                if selectItem+1 < musicData.count {
+                    selectItem = (selectItem + musicData.count + 1) % musicData.count
+                    selectData(index: selectItem)
+                }
+            }
+            break
+        default:
+            break
         }
     }
+    
+    func didUpdatePosition(_ player: AVPlayer?, _ position: PlayerPosition) {
+        percentSlider.value = Float(position.current)/Float(position.duration)
+        minTimeLabel.text = String(format: "%02d:%02d", position.current/60, position.current%60)
+        maxTimeLabel.text = String(format: "%02d:%02d", position.duration/60, position.duration%60)
+        updateTrackSlider()
+    }
+    
+    
 }
