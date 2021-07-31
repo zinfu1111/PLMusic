@@ -47,6 +47,7 @@ class PlayerViewController: UIViewController {
         repeatButton.backgroundColor = UIColor(named: "SelectRule")
         randomButton.backgroundColor = .clear
         artistImageView.forEach({ $0.layer.cornerRadius = $0.frame.width * 0.2})
+        manager.setupRemoteTransportControls()
         DataManager.shared.fetchMusic(completeHandler: {[weak self] data in
             
             guard let self = self else { return }
@@ -68,6 +69,7 @@ class PlayerViewController: UIViewController {
                 self.selectData(index: 0)
             }
         })
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -127,6 +129,9 @@ class PlayerViewController: UIViewController {
             manager.player.pause()
             playButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
             status = .pause
+        case .unowned:
+            selectData(index: 0)
+            status = .play
         }
     }
     
@@ -253,6 +258,9 @@ extension PlayerViewController: PaulPlayerDelegate{
                 if selectItem+1 < musicData.count {
                     selectItem = (selectItem + musicData.count + 1) % musicData.count
                     selectData(index: selectItem)
+                }else{
+                    playButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+                    status = .unowned
                 }
             }
             break

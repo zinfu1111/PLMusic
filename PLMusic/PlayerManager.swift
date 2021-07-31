@@ -22,6 +22,7 @@ public struct PlayerPosition {
 }
 
 enum PlayState {
+    case unowned
     case play
     case pause
 }
@@ -53,7 +54,6 @@ class PaulPlayerManager:NSObject {
             self.player.replaceCurrentItem(with: item)
             self.player.addObserver(self, forKeyPath: #keyPath(AVPlayer.timeControlStatus), options: [.new], context: nil)
             self.addTimeObserve()
-            self.setupRemoteTransportControls()
             self.player.allowsExternalPlayback = true
             self.player.usesExternalPlaybackWhileExternalScreenIsActive = true
             
@@ -248,7 +248,7 @@ class PaulPlayerManager:NSObject {
         
         commandCenter.previousTrackCommand.addTarget
         {[unowned self] event in
-            
+            print("debug123",(current+maxCount - 1) % maxCount)
             delegate?.selectData(index: (current+maxCount - 1) % maxCount)
             
             return.success
@@ -257,9 +257,10 @@ class PaulPlayerManager:NSObject {
         
         commandCenter.nextTrackCommand.addTarget
         {[unowned self] event in
-            
-            delegate?.selectData(index: (current+maxCount + 1) % maxCount)
-            
+            if event.timestamp != 0 {
+                print("debug123",(current+maxCount + 1) % maxCount)
+                delegate?.selectData(index: (current+maxCount + 1) % maxCount)
+            }
             return.success
             
         }

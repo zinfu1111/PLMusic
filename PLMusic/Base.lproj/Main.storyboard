@@ -370,7 +370,7 @@
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="OYn-2E-V0Z"/>
-                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="4tg-vA-SLZ" firstAttribute="width" secondItem="8zH-yc-Fy3" secondAttribute="width" multiplier="0.8" id="4fM-iM-goR"/>
                             <constraint firstItem="BGY-LU-hMr" firstAttribute="top" secondItem="OYn-2E-V0Z" secondAttribute="top" constant="50" id="5fi-P1-aF2"/>
@@ -526,7 +526,7 @@
         <image name="speaker.wave.1" catalog="system" width="128" height="108"/>
         <image name="speaker.wave.2" catalog="system" width="128" height="90"/>
         <namedColor name="SelectRule">
-            <color red="0.10196078431372549" green="0.10196078431372549" blue="0.10196078431372549" alpha="0.30407927052074712" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.10199999809265137" green="0.10199999809265137" blue="0.10199999809265137" alpha="0.30399999022483826" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
